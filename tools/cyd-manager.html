@@ -1,0 +1,212 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CYD Offline Manager</title>
+<style>
+:root{color-scheme:dark;--bg:#0f172a;--surface:#111827;--card:#192134;--line:#334155;--accent:#10b981;--accent-hover:#34d399;--text:#f8fafc;--muted:#cbd5e1;--danger:#ef4444;--focus:#5eead4;--shadow:0 18px 45px rgba(0,0,0,.22);--motion-fast:140ms;--motion-normal:220ms;--motion-enter:360ms}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100dvh;background:radial-gradient(circle at 15% 0,rgba(16,185,129,.1),transparent 34rem),var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1040px;margin:auto;padding:32px 24px 56px}.skip{position:fixed;left:12px;top:12px;z-index:20;transform:translateY(-150%);background:var(--text);color:var(--bg);padding:10px 14px;border-radius:8px}.skip:focus{transform:none}.eyebrow{margin:0 0 6px;color:var(--accent-hover);font-size:.78rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}h1{margin:0;font-size:clamp(1.85rem,5vw,2.65rem);line-height:1.1;letter-spacing:-.035em}.lead{max-width:62ch;color:var(--muted);margin:10px 0 22px}.actions{display:flex;flex-wrap:wrap;gap:8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}.card{min-width:0;background:linear-gradient(145deg,rgba(255,255,255,.018),transparent 45%),var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 1px 0 rgba(255,255,255,.025);animation:card-in var(--motion-enter) cubic-bezier(.2,.8,.2,1) both;transition:transform var(--motion-normal) ease,border-color var(--motion-normal) ease,box-shadow var(--motion-normal) ease}.card:nth-child(2){animation-delay:35ms}.card:nth-child(3){animation-delay:70ms}.card:nth-child(4){animation-delay:105ms}.card:nth-child(5){animation-delay:140ms}.card:nth-child(6){animation-delay:175ms}.card:hover{transform:translateY(-2px);border-color:#475569;box-shadow:var(--shadow)}h2{margin:0 0 10px;font-size:1.08rem;letter-spacing:-.01em}label{display:block;font-weight:650;margin:14px 0 6px}input:not([type="checkbox"]),select{width:100%;min-height:46px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);outline:0;background:var(--surface);color:var(--text);font:inherit;transition:border-color var(--motion-fast),box-shadow var(--motion-fast),background var(--motion-fast)}input:hover,select:hover{border-color:#64748b}input:focus-visible,select:focus-visible{border-color:var(--focus);box-shadow:0 0 0 3px rgba(94,234,212,.2)}input[type="file"]{padding:8px}.check{display:flex;align-items:center;gap:10px;min-height:44px}.check input{width:20px;height:20px;accent-color:var(--accent)}button{position:relative;min-height:44px;border:1px solid transparent;border-radius:10px;padding:10px 15px;margin:8px 0 0;background:var(--accent);color:#052e26;font:inherit;font-weight:780;cursor:pointer;touch-action:manipulation;transition:background var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),transform var(--motion-fast),opacity var(--motion-fast)}button+button{margin-left:6px}button:hover:not(:disabled){background:var(--accent-hover);box-shadow:0 8px 22px rgba(16,185,129,.18)}button:active:not(:disabled){transform:translateY(1px)}button:focus-visible{outline:3px solid var(--focus);outline-offset:3px}button.secondary{background:#293851;color:var(--text);border-color:#3b4b66}button.secondary:hover:not(:disabled){background:#354764;box-shadow:none}button.danger{background:#b91c1c;color:#fff}button.danger:hover:not(:disabled){background:var(--danger);box-shadow:0 8px 22px rgba(239,68,68,.16)}button:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}.busy{color:transparent!important;pointer-events:none}.busy::after{content:"";position:absolute;inset:50% auto auto 50%;width:18px;height:18px;margin:-10px 0 0 -10px;border:2px solid rgba(255,255,255,.42);border-top-color:currentColor;border-right-color:#fff;border-radius:50%;animation:spin .75s linear infinite}#status{position:sticky;top:8px;z-index:10;display:flex;align-items:center;gap:10px;background:rgba(8,16,27,.96);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:18px 0;min-height:50px;box-shadow:0 10px 35px rgba(0,0,0,.18);transition:border-color var(--motion-normal),background var(--motion-normal),transform var(--motion-fast)}#status::before{content:"";flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:#94a3b8}.ok{border-color:#059669!important}.ok::before{background:#34d399!important;box-shadow:0 0 0 4px rgba(52,211,153,.12)}.err{border-color:#dc2626!important}.err::before{background:#f87171!important}.working::before{background:#5eead4!important;animation:pulse 1s ease-in-out infinite}small{display:block;color:var(--muted);line-height:1.45}pre{min-height:92px;margin:12px 0 0;padding:12px;border-radius:10px;background:var(--surface);white-space:pre-wrap;overflow-wrap:anywhere;color:var(--muted);max-height:260px;overflow:auto}.field-action{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.field-action button{min-width:82px;margin:0}.progress{width:100%;height:10px;margin-top:12px;accent-color:var(--accent)}.service-list{display:grid;gap:8px;margin-top:12px}.service{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}.service strong,.service small{overflow-wrap:anywhere}.service button{margin:0}.output-loading{animation:pulse .9s ease-in-out infinite}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.48}}@keyframes card-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}@media(max-width:560px){main{padding:24px 16px 40px}.actions{display:grid;grid-template-columns:1fr}.actions button,button{width:100%;margin-left:0!important}.card{padding:17px}.field-action{grid-template-columns:1fr}.field-action button{width:100%}.service{grid-template-columns:1fr}}@media(max-height:500px) and (orientation:landscape){main{padding-top:18px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.card:hover{transform:none}}
+</style></head>
+<body><a class="skip" href="#content">Skip to content</a><main id="content"><p class="eyebrow">Protected local vault</p><h1>CYD Offline Manager</h1><p class="lead">Local USB management. Data stays between this browser and the device and is never sent over the Internet.</p><div class="actions"><button id="connect">Connect CYD</button><button id="sync" disabled>Sync UTC time</button><button id="refresh" class="secondary" disabled>Refresh status</button></div><div id="status" role="status" aria-live="polite" aria-atomic="true">CYD not connected</div>
+<div class="grid"><section class="card"><h2>Import authenticator</h2><label for="uri">otpauth:// URI</label><input id="uri" placeholder="otpauth://totp/Service?..." autocomplete="off"><button data-cmd="import" disabled>Import</button><p><small>Supports TOTP, HOTP, Steam, SHA1/SHA256/SHA512, and 6/8 digits.</small></p></section>
+<section class="card"><h2>Encrypted vault</h2><button data-cmd="backup" disabled>Download backup</button><button data-cmd="emergencyExport" class="secondary" disabled>Emergency package</button><label for="restore">Backup or emergency file</label><input id="restore" type="file" accept=".cydbackup,.cydemergency,.txt,.json"><label for="restorePin">Backup PIN</label><div class="field-action"><input id="restorePin" type="password" inputmode="numeric" minlength="6" maxlength="20" autocomplete="current-password"><button type="button" class="secondary reveal" data-target="restorePin" aria-label="Show backup PIN">Show</button></div><label for="newPin">New primary PIN</label><div class="field-action"><input id="newPin" type="password" inputmode="numeric" minlength="6" maxlength="20" autocomplete="new-password"><button type="button" class="secondary reveal" data-target="newPin" aria-label="Show new PIN">Show</button></div><label for="duressPin">Duress PIN</label><div class="field-action"><input id="duressPin" type="password" inputmode="numeric" minlength="6" maxlength="20" autocomplete="new-password"><button type="button" class="secondary reveal" data-target="duressPin" aria-label="Show duress PIN">Show</button></div><button data-cmd="restore" class="secondary" disabled>Restore file</button><button data-cmd="pin" class="secondary" disabled>Change PIN</button><button data-cmd="duress" class="secondary" disabled>Configure duress PIN</button></section>
+<section class="card"><h2>Settings and accessibility</h2><label for="brightness">Brightness</label><select id="brightness"><option>25</option><option selected>50</option><option>75</option><option>100</option></select><label for="screen">Screen timeout</label><select id="screen"><option value="30">30 seconds</option><option value="60">1 minute</option><option value="120">2 minutes</option><option value="0">Never</option></select><label for="lock">Automatic lock</label><select id="lock"><option value="120">2 minutes</option><option value="300">5 minutes</option><option value="600">10 minutes</option><option value="1800">30 minutes</option></select><label class="check"><input id="light" type="checkbox"> Light theme</label><label class="check"><input id="largeText" type="checkbox"> Large text</label><label class="check"><input id="highContrast" type="checkbox"> High contrast</label><label class="check"><input id="reducedMotion" type="checkbox"> Reduced motion</label><button data-cmd="settings" disabled>Save settings</button><button data-cmd="lock" class="secondary" disabled>Lock now</button></section>
+<section class="card"><h2>Edit service</h2><label for="editIndex">Index</label><input id="editIndex" type="number" min="0"><label for="editName">Name</label><input id="editName"><label for="editGroup">Group (0-9)</label><input id="editGroup" type="number" min="0" max="9" value="0"><label for="serviceType">Type</label><select id="serviceType"><option value="0">TOTP</option><option value="1">HOTP</option><option value="2">Steam Guard</option></select><label for="algorithm">Algorithm</label><select id="algorithm"><option value="1">SHA1</option><option value="2">SHA256</option><option value="3">SHA512</option></select><label for="digits">Digits</label><select id="digits"><option>6</option><option>8</option></select><label for="period">Period in seconds</label><input id="period" type="number" min="15" max="120" value="30"><label for="counter">HOTP counter</label><input id="counter" type="number" min="0" value="0"><label class="check"><input id="favorite" type="checkbox"> Favorite</label><button data-cmd="edit" disabled>Save service</button><button data-cmd="up" class="secondary" disabled>Move up</button><button data-cmd="down" class="secondary" disabled>Move down</button></section>
+<section class="card"><h2>Groups</h2><label for="groupId">Group ID</label><input id="groupId" type="number" min="0" max="9" value="1"><label for="groupName">Group name</label><input id="groupName" maxlength="20"><button data-cmd="groupCreate" disabled>Create</button><button data-cmd="groupRename" class="secondary" disabled>Rename</button><button data-cmd="groupDelete" class="danger" disabled>Delete</button><p><small>Services in a deleted group are moved to Main.</small></p></section>
+<section class="card"><h2>Catalog and search</h2><label for="search">Search by name</label><input id="search" type="search" autocomplete="off"><button data-cmd="list" class="secondary" disabled>Refresh catalog</button><div id="serviceList" class="service-list"><small>No data.</small></div></section>
+<section class="card"><h2>Diagnostics</h2><button data-cmd="diagnostics" class="secondary" disabled>Check device</button><pre id="output">No data.</pre></section>
+<section class="card"><h2>USB firmware update</h2><label for="firmware">Application firmware (.bin)</label><input id="firmware" type="file" accept=".bin"><button data-cmd="firmware" disabled>Update firmware</button><progress id="firmwareProgress" class="progress" max="100" value="0" aria-label="Firmware update progress"></progress><small id="firmwareStep" aria-live="polite">Select firmware.bin, not the merged BIN.</small></section></div></main>
+<script>
+let port, writer, reader, pending = [], catalog = [];
+const $ = selector => document.querySelector(selector);
+const buttons = () => document.querySelectorAll('[data-cmd],#sync,#refresh');
+const status = (message, state = 'ok') => {
+  const element = $('#status');
+  element.textContent = message;
+  element.className = state;
+};
+
+async function withBusy(button, task) {
+  const wasDisabled = button.disabled;
+  button.disabled = true;
+  button.classList.add('busy');
+  button.setAttribute('aria-busy', 'true');
+  try { return await task(); }
+  catch (error) { status(error.message || 'Operation failed', 'err'); }
+  finally {
+    button.classList.remove('busy');
+    button.removeAttribute('aria-busy');
+    button.disabled = wasDisabled;
+  }
+}
+
+async function readLoop() {
+  const decoder = new TextDecoder();
+  let buffer = '';
+  while (port?.readable) {
+    reader = port.readable.getReader();
+    try {
+      while (true) {
+        const {value, done} = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, {stream: true});
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const request = pending.shift();
+          try {
+            if (request?.timer) clearTimeout(request.timer);
+            request?.resolve(JSON.parse(line));
+          }
+          catch { status('Invalid response from the CYD. Try again.', 'err'); }
+        }
+      }
+    } finally { reader.releaseLock(); }
+  }
+}
+
+async function send(payload) {
+  if (!port) throw Error('CYD not connected');
+  status('Communicating with the CYD...', 'working');
+  const data = new TextEncoder().encode(JSON.stringify(payload) + '\n');
+  const response = new Promise((resolve, reject) => {
+    const request = {resolve, reject};
+    pending.push(request);
+    request.timer = setTimeout(() => {
+      const index = pending.indexOf(request);
+      if (index >= 0) pending.splice(index, 1);
+      reject(Error('The CYD is not responding. Check the cable and try again.'));
+    }, 30000);
+  });
+  writer = port.writable.getWriter();
+  try { await writer.write(data); }
+  finally { writer.releaseLock(); }
+  const result = await response;
+  status(result.message, result.ok ? 'ok' : 'err');
+  return result;
+}
+
+const act = (selector, task) => {
+  $(selector).addEventListener('click', event => withBusy(event.currentTarget, task));
+};
+
+act('#connect', async () => {
+  port = await navigator.serial.requestPort();
+  await port.open({baudRate: 115200});
+  buttons().forEach(button => button.disabled = false);
+  readLoop().catch(() => status('USB connection interrupted. Reconnect the CYD.', 'err'));
+  await send({cmd: 'status'});
+});
+act('#sync', () => send({cmd: 'time', epoch: Math.floor(Date.now() / 1000)}));
+act('#refresh', () => send({cmd: 'status'}));
+act('[data-cmd="import"]', () => send({cmd: 'import_uri', uri: $('#uri').value.trim()}));
+act('[data-cmd="backup"]', async () => {
+  const result = await send({cmd: 'backup'});
+  if (!result.ok) return;
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([result.data], {type: 'text/plain'}));
+  link.download = 'cyd-backup-' + new Date().toISOString().slice(0, 10) + '.cydbackup';
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+act('[data-cmd="emergencyExport"]', async () => {
+  const result = await send({cmd: 'emergency_export'});
+  if (!result.ok) return;
+  download(result.data, 'cyd-emergency-' + new Date().toISOString().slice(0, 10) + '.cydemergency');
+});
+function download(data, name) {
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([data], {type: 'application/json'}));
+  link.download = name; link.click(); URL.revokeObjectURL(link.href);
+}
+act('[data-cmd="restore"]', async () => {
+  const file = $('#restore').files[0], pin = $('#restorePin').value;
+  if (!file || pin.length < 6) return status('Choose a backup and enter a valid PIN.', 'err');
+  const text = await file.text();
+  try {
+    const pkg = JSON.parse(text);
+    if (pkg.format === 'CYD-EMERGENCY') return send({cmd: 'emergency_restore', pin, package: pkg});
+  } catch {}
+  await send({cmd: 'restore', pin, data: text});
+});
+act('[data-cmd="pin"]', () => {
+  const pin = $('#newPin').value;
+  if (pin.length < 6) return status('The new PIN must contain at least 6 digits.', 'err');
+  return send({cmd: 'change_pin', pin});
+});
+act('[data-cmd="duress"]', () => {
+  const pin = $('#duressPin').value;
+  if (pin.length < 6) return status('The duress PIN must contain at least 6 digits.', 'err');
+  return send({cmd: 'duress_pin', pin});
+});
+act('[data-cmd="settings"]', () => send({cmd: 'settings', brightness: +$('#brightness').value, display_timeout: +$('#screen').value, auto_lock: +$('#lock').value, light_theme: $('#light').checked, large_text: $('#largeText').checked, high_contrast: $('#highContrast').checked, reduced_motion: $('#reducedMotion').checked}));
+act('[data-cmd="lock"]', () => send({cmd: 'lock'}));
+act('[data-cmd="list"]', async () => {
+  const result = await send({cmd: 'list'});
+  if (result.ok) { catalog = JSON.parse(result.data).services || []; renderCatalog(); }
+});
+function renderCatalog() {
+  const query = $('#search').value.trim().toLocaleLowerCase('en');
+  const list = $('#serviceList'); list.replaceChildren();
+  const visible = catalog.filter(item => item.name.toLocaleLowerCase('en').includes(query));
+  if (!visible.length) { const empty = document.createElement('small'); empty.textContent = query ? 'No matching services.' : 'No saved services.'; list.append(empty); return; }
+  visible.forEach(item => {
+    const row = document.createElement('div'); row.className = 'service';
+    const text = document.createElement('div'); const name = document.createElement('strong'); name.textContent = (item.favorite ? 'Favorite | ' : '') + item.name;
+    const meta = document.createElement('small'); meta.textContent = ['TOTP','HOTP','Steam'][item.type || 0] + ' | group ' + item.group + ' | index ' + item.index;
+    text.append(name, meta); const actions = document.createElement('div');
+    const edit = document.createElement('button'); edit.className = 'secondary'; edit.textContent = 'Edit'; edit.onclick = () => fillEditor(item);
+    const favorite = document.createElement('button'); favorite.className = 'secondary'; favorite.textContent = item.favorite ? 'Remove favorite' : 'Favorite'; favorite.setAttribute('aria-pressed', String(!!item.favorite)); favorite.onclick = () => withBusy(favorite, async () => { const result = await send({cmd:'favorite', index:item.index, favorite:!item.favorite}); if (result?.ok) { item.favorite = !item.favorite; renderCatalog(); } });
+    actions.append(edit, favorite); row.append(text, actions); list.append(row);
+  });
+}
+function fillEditor(item) { $('#editIndex').value = item.index; $('#editName').value = item.name; $('#editGroup').value = item.group; $('#algorithm').value = item.algorithm; $('#digits').value = item.digits; $('#period').value = item.period; $('#serviceType').value = item.type || 0; $('#counter').value = item.counter || 0; $('#favorite').checked = !!item.favorite; $('#editName').focus(); }
+$('#search').addEventListener('input', renderCatalog);
+
+act('[data-cmd="diagnostics"]', async () => { const result = await send({cmd:'diagnostics'}); if (result.ok) $('#output').textContent = JSON.stringify(JSON.parse(result.data), null, 2); });
+
+act('[data-cmd="firmware"]', async () => {
+  const file = $('#firmware').files[0];
+  if (!file) return status('Select firmware.bin.', 'err');
+  if (file.size < 100000 || file.size > 1300000) return status('Invalid firmware size. Use firmware.bin, not the merged BIN.', 'err');
+  const bytes = new Uint8Array(await file.arrayBuffer()), progress = $('#firmwareProgress'), step = $('#firmwareStep');
+  if (bytes[0] !== 0xe9) return status('Invalid file: select firmware-offline-update.bin, not the merged BIN.', 'err');
+  const controls = [...document.querySelectorAll('button')];
+  const disabled = controls.map(button => button.disabled);
+  controls.forEach(button => button.disabled = true);
+  progress.value = 0;
+  try {
+    let result = await send({cmd:'fw_begin', size:bytes.length}); if (!result.ok) return;
+    for (let offset = 0; offset < bytes.length; offset += 768) {
+      const chunk = bytes.subarray(offset, Math.min(offset + 768, bytes.length));
+      const data = btoa(String.fromCharCode(...chunk));
+      result = await send({cmd:'fw_chunk', data}); if (!result.ok) return;
+      progress.value = Math.round((offset + chunk.length) * 100 / bytes.length);
+      step.textContent = 'Writing firmware: ' + progress.value + '%';
+    }
+    step.textContent = 'Verifying and restarting the CYD...';
+    result = await send({cmd:'fw_end'});
+    if (result.ok) step.textContent = 'Update complete. Wait for the restart and reconnect the CYD.';
+  } finally {
+    controls.forEach((button, index) => button.disabled = disabled[index]);
+  }
+});
+
+const editPayload = () => ({index: +$('#editIndex').value, name: $('#editName').value.trim(), group: +$('#editGroup').value, algorithm: +$('#algorithm').value, digits: +$('#digits').value, period: +$('#period').value, type: +$('#serviceType').value, counter: +$('#counter').value, favorite: $('#favorite').checked});
+act('[data-cmd="edit"]', () => send({cmd: 'edit', ...editPayload()}));
+act('[data-cmd="up"]', () => send({cmd: 'move', index: +$('#editIndex').value, direction: -1}));
+act('[data-cmd="down"]', () => send({cmd: 'move', index: +$('#editIndex').value, direction: 1}));
+act('[data-cmd="groupCreate"]', () => send({cmd: 'group_create', name: $('#groupName').value.trim()}));
+act('[data-cmd="groupRename"]', () => send({cmd: 'group_rename', group: +$('#groupId').value, name: $('#groupName').value.trim()}));
+act('[data-cmd="groupDelete"]', () => send({cmd: 'group_delete', group: +$('#groupId').value}));
+
+document.querySelectorAll('.reveal').forEach(button => button.addEventListener('click', () => {
+  const input = document.getElementById(button.dataset.target);
+  const reveal = input.type === 'password';
+  input.type = reveal ? 'text' : 'password';
+  button.textContent = reveal ? 'Hide' : 'Show';
+  const names = {newPin: 'new PIN', duressPin: 'duress PIN', restorePin: 'backup PIN'};
+  button.setAttribute('aria-label', (reveal ? 'Hide ' : 'Show ') + names[input.id]);
+}));
+
+if (!('serial' in navigator)) {
+  status('Web Serial is unavailable. Open this file in desktop Chrome or Edge.', 'err');
+  $('#connect').disabled = true;
+}
+</script></body></html>

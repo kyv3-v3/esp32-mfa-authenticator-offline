@@ -1,22 +1,15 @@
-#ifndef CLOCK_H
-#define CLOCK_H
-
-#include <time.h>
-#include <esp_log.h>
-#include "constants.h"
+#pragma once
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
-	void init_clock();
-	unsigned long get_elapsed_number_of_time_steps();
-	int get_second();
+
+int set_clock_utc(const char *);
+int clock_is_set(void);
+int get_second(void);
+unsigned long get_epoch(void);
+void set_clock_epoch(unsigned long);
+
 #ifdef __cplusplus
 }
-
-#include <ESP32Time.h>
-
 #endif
-
-#endif // CLOCK_H

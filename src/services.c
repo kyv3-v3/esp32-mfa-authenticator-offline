@@ -1,204 +1,90 @@
 #include "services.h"
+#include <stdlib.h>
+#include <string.h>
 
-static const char *TAG = "services";
+static Service services[MAX_NUMBER_OF_SERVICES];
+static uint8_t service_count, active_group, groups[MAX_NUMBER_OF_GROUPS], group_count;
 
-Service services[MAX_NUMBER_OF_SERVICES] = {0};
-uint8_t services_counter = 0;
-uint8_t active_group = 0;
-uint8_t groups[MAX_NUMBER_OF_GROUPS] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
-uint8_t groups_counter = 0;
-
-int find_service_index_by_name_and_group(const char *name, uint8_t group)
-{
-    ESP_LOGI(TAG, "locating service %s in group %d", name, group);
-
-    for (int i = 0; i < MAX_NUMBER_OF_SERVICES; ++i)
-    {
-        if (strcmp(services[i].name, name) == 0 && services[i].group == group)
-        {
-            return i;
-        }
-    }
-
-    ESP_LOGI(TAG, "could not locate service %s in group %d", name, group);
-    return -1;
+static int find_service(const char *name, uint8_t group) {
+  for (int i = 0; i < service_count; ++i)
+    if (services[i].group == group && !strcmp(services[i].name, name)) return i;
+  return -1;
 }
 
-bool does_group_exist(uint8_t group)
-{
-    ESP_LOGI(TAG, "Checking if group %d exists", group);
-
-    for (int i = 0; i < MAX_NUMBER_OF_GROUPS; i++)
-    {
-        if (groups[i] == group)
-        {
-            ESP_LOGI(TAG, "Group %d exists", group);
-            return true;
-        }
-    }
-
-    ESP_LOGI(TAG, "Group %d does not exist", group);
-    return false;
+static bool has_group(uint8_t group) {
+  for (int i = 0; i < group_count; ++i) if (groups[i] == group) return true;
+  return false;
 }
 
-bool add_group_to_list(uint8_t group)
-{
-    if (groups_counter >= MAX_NUMBER_OF_GROUPS)
-    {
-        ESP_LOGE(TAG, "Max number of groups reached. Group %d can't be added.", group);
-        return false;
-    }
+bool ensure_group_exists(uint8_t group) {
+  if (has_group(group)) return true;
+  if (group_count >= MAX_NUMBER_OF_GROUPS) return false;
+  int i = group_count++;
+  while (i && groups[i - 1] > group) { groups[i] = groups[i - 1]; --i; }
+  groups[i] = group;
+  if (group_count == 1) active_group = group;
+  return true;
+}
 
-    int i;
-    for (i = groups_counter - 1; (i >= 0 && groups[i] > group); i--)
-    {
-        groups[i + 1] = groups[i];
-    }
+bool upsert_service_by_name_and_group(const char *name, uint8_t group,
+    int secret_length, uint8_t *secret, uint8_t algorithm, uint8_t digits,
+    uint8_t period, uint8_t type, bool favorite, uint64_t counter) {
+  if (!name || !*name || strlen(name) >= MAX_SERVICE_NAME_LENGTH ||
+      secret_length <= 0 || !secret || !ensure_group_exists(group)) return false;
+  int index = find_service(name, group);
+  if (index < 0) {
+    if (service_count >= MAX_NUMBER_OF_SERVICES) return false;
+    index = service_count++;
+  } else {
+    free(services[index].secret.value);
+  }
+  Service *item = &services[index];
+  strcpy(item->name, name);
+  item->group = group;
+  item->secret.length = secret_length;
+  item->secret.value = secret;
+  item->algorithm = algorithm;
+  item->digits = digits;
+  item->period = period;
+  item->type = type;
+  item->favorite = favorite;
+  item->counter = counter;
+  return true;
+}
 
-    groups[i + 1] = group;
-    groups_counter++;
+bool update_service_totp_in_active_services_group_by_name(const char *name, char code[]) {
+  int index = find_service(name, active_group);
+  if (index < 0 || !code) return false;
+  strcpy(services[index].totp, code);
+  return true;
+}
 
-    ESP_LOGI(TAG, "Group %d added successfully. Current count: %d", group, groups_counter);
+void clear_all_services(void) {
+  for (int i = 0; i < service_count; ++i) free(services[i].secret.value);
+  memset(services, 0, sizeof(services));
+  memset(groups, 0, sizeof(groups));
+  service_count = group_count = active_group = 0;
+}
+
+uint8_t get_active_group(void) { return active_group; }
+Service *get_services(void) { return services; }
+
+bool set_active_group(uint8_t group) {
+  if (!has_group(group)) return false;
+  active_group = group;
+  return true;
+}
+
+static bool move_group(int direction) {
+  for (int i = 0; i < group_count; ++i) {
+    if (groups[i] != active_group) continue;
+    int next = i + direction;
+    if (next < 0 || next >= group_count) return false;
+    active_group = groups[next];
     return true;
+  }
+  return false;
 }
 
-bool upsert_service_by_name_and_group(const char *name, uint8_t group, int secret_length, uint8_t *secret_value)
-{
-    ESP_LOGI(TAG, "adding service %s in group %d", name, group);
-
-    if (!does_group_exist(group))
-    {
-        ESP_LOGD(TAG, "adding new group %d", group);
-        if (!add_group_to_list(group))
-        {
-            ESP_LOGD(TAG, "group not added %d", group);
-            return false;
-        }
-        ESP_LOGD(TAG, "group added %d", group);
-    }
-
-    int index = find_service_index_by_name_and_group(name, group);
-    if (index == -1)
-    {
-        if (services_counter >= MAX_NUMBER_OF_SERVICES)
-        {
-            ESP_LOGE(TAG, "no space available in the store");
-            return false;
-        }
-
-        ESP_LOGD(TAG, "adding new service");
-        strcpy(services[services_counter].name, name);
-        services[services_counter].group = group;
-        services[services_counter].secret.length = secret_length;
-        services[services_counter].secret.value = secret_value;
-        services_counter++;
-    }
-    else
-    {
-        ESP_LOGD(TAG, "updating service found at group %d and index %d", group, index);
-        services[index].secret.length = secret_length;
-        services[index].secret.value = secret_value;
-        services[index].group = group;
-    }
-
-    ESP_LOGI(TAG, "new service added successfully");
-    return true;
-}
-
-bool update_service_totp_in_active_services_group_by_name(const char *name, char totp[])
-{
-    ESP_LOGI(TAG, "updating totp %s for service %s and group %d", name, totp, active_group);
-    int index = find_service_index_by_name_and_group(name, active_group);
-    strcpy(services[index].totp, totp);
-    ESP_LOGI(TAG, "totp updated successfully");
-    return true;
-}
-
-void clear_all_services()
-{
-    memset(services, 0, sizeof(services));
-}
-
-uint8_t get_active_group()
-{
-    return active_group;
-}
-
-Service *get_services()
-{
-    return services;
-}
-
-bool change_active_group_left()
-{
-    int current_index = -1;
-    for (int i = 0; i < groups_counter; ++i)
-    {
-        if (groups[i] == active_group)
-        {
-            current_index = i;
-            break;
-        }
-    }
-
-    if (current_index == -1)
-    {
-        return false;
-    }
-
-    if (current_index > 0)
-    {
-        active_group = groups[current_index - 1];
-        return true;
-    }
-
-    return false;
-}
-
-bool change_active_group_right()
-{
-    int current_index = -1;
-    for (int i = 0; i < groups_counter; ++i)
-    {
-        if (groups[i] == active_group)
-        {
-            current_index = i;
-            break;
-        }
-    }
-
-    if (current_index == -1)
-    {
-        return false;
-    }
-
-    if (current_index < groups_counter - 1)
-    {
-        active_group = groups[current_index + 1];
-        return true;
-    }
-
-    return false;
-}
-
-void print_service(int index)
-{
-    const Service *service = &services[index];
-    ESP_LOGD(TAG, "name: %s", service->name);
-    ESP_LOGD(TAG, "secret legnth: %d", service->secret.length);
-    ESP_LOGD(TAG, "secret value:");
-    for (int j = 0; j < service->secret.length; ++j)
-    {
-        ESP_LOGD(TAG, "%02X ", service->secret.value[j]);
-    }
-    ESP_LOGD(TAG, "totp: %s", service->totp);
-    ESP_LOGD(TAG, "-------------------");
-}
-
-void print_all_services()
-{
-    for (int i = 0; i < MAX_NUMBER_OF_SERVICES; ++i)
-    {
-        print_service(i);
-    }
-}
+bool change_active_group_left(void) { return move_group(-1); }
+bool change_active_group_right(void) { return move_group(1); }

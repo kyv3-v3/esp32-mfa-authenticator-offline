@@ -9,7 +9,7 @@ void ui_touch_calibration_screen_init(void)
     lv_obj_set_style_bg_opa(ui_touch_calibration_screen, LV_OPA_COVER, LV_PART_MAIN);
 
     ui_touch_calibration_screen_label = lv_label_create(ui_touch_calibration_screen);
-    lv_label_set_text(ui_touch_calibration_screen_label, "Touch and hold\nthe top-left corner\nuntil the next instruction appears.");
+    lv_label_set_text(ui_touch_calibration_screen_label, "Press and hold\nthe top-left corner\nuntil the next prompt.");
     lv_obj_set_style_text_color(ui_touch_calibration_screen_label, lv_color_black(), LV_PART_MAIN);
     lv_obj_set_style_text_align(ui_touch_calibration_screen_label, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);
     lv_obj_align(ui_touch_calibration_screen_label, LV_ALIGN_CENTER, 0, 0);
@@ -32,21 +32,21 @@ void ui_touch_calibration_screen_init(void)
 
 void ui_touch_calibration_screen_step_1()
 {
-    lv_label_set_text(ui_touch_calibration_screen_label, "Touch and hold\nthe top-left corner\nuntil the next instruction appears.");
+    lv_label_set_text(ui_touch_calibration_screen_label, "Press and hold\nthe top-left corner\nuntil the next prompt.");
     lv_obj_clear_flag(ui_touch_calibration_screen_dot_top_left, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_touch_calibration_screen_dot_bottom_right, LV_OBJ_FLAG_HIDDEN);
 }
 
 void ui_touch_calibration_screen_step_2()
 {
-    lv_label_set_text(ui_touch_calibration_screen_label, "Touch and hold\nthe bottom-right corner\nuntil the next instruction appears.");
+    lv_label_set_text(ui_touch_calibration_screen_label, "Press and hold\nthe bottom-right corner\nuntil the next prompt.");
     lv_obj_clear_flag(ui_touch_calibration_screen_dot_bottom_right, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_touch_calibration_screen_dot_top_left, LV_OBJ_FLAG_HIDDEN);
 }
 
 void ui_touch_calibration_screen_step_3()
 {
-    lv_label_set_text(ui_touch_calibration_screen_label, "Touch calibration complete!");
+    lv_label_set_text(ui_touch_calibration_screen_label, "Calibration complete");
     lv_obj_add_flag(ui_touch_calibration_screen_dot_top_left, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(ui_touch_calibration_screen_dot_bottom_right, LV_OBJ_FLAG_HIDDEN);
 }
@@ -55,7 +55,7 @@ void ui_touch_calibration_screen_destroy()
 {
     if (ui_touch_calibration_screen != NULL)
     {
-        lv_obj_del(ui_touch_calibration_screen);
+        lv_obj_del_delayed(ui_touch_calibration_screen, 220);
         ui_touch_calibration_screen = NULL;
     }
 }

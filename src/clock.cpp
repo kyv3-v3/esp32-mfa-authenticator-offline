@@ -1,37 +1,40 @@
 #include "clock.hpp"
+#include "clock_input.hpp"
+#include <ESP32Time.h>
+#include <cstdlib>
 
 ESP32Time rtc;
+RTC_DATA_ATTR static uint32_t clock_marker = 0;
+static constexpr uint32_t CLOCK_MARKER = 0x43594d46;
 
-static const char *TAG = "clock";
-
-void init_clock()
+int set_clock_utc(const char *digits)
 {
-  // NOTE: retrieve time from the NTP server and setting the system time with it
-  configTime(GMT_OFFSET_SEC, DAYLIGHT_OFFSET_SEC, NTP_SERVER_URL);
+  ClockInput input;
+  if (!parse_clock_input(digits, input))
+    return 0;
 
-  // NOTE: wait until time is retrieved
-  struct tm time_info;
-  time_t now;
-
-  while ((now = time(nullptr)) < 24 * 3600)
-  {
-    ESP_LOGI(TAG, "waiting for time to be set...");
-    delay(500);
-  }
-
-  gmtime_r(&now, &time_info);
-
-  // NOTE: set RTC time with the time from the NTP server
-  rtc.setTimeStruct(time_info);
-  ESP_LOGI(TAG, "time is: %s", rtc.getDateTime().c_str());
+  setenv("TZ", "UTC0", 1);
+  tzset();
+  rtc.setTime(input.second, input.minute, input.hour,
+              input.day, input.month, input.year);
+  clock_marker = CLOCK_MARKER;
+  return 1;
 }
 
-unsigned long get_elapsed_number_of_time_steps()
+int clock_is_set()
 {
-  return rtc.getEpoch() / TOTP_PERIOD;
+  return clock_marker == CLOCK_MARKER && time(nullptr) >= 1577836800;
 }
 
 int get_second()
 {
   return rtc.getSecond();
+}
+
+unsigned long get_epoch() { return rtc.getEpoch(); }
+
+void set_clock_epoch(unsigned long epoch)
+{
+  rtc.setTime(epoch);
+  clock_marker = CLOCK_MARKER;
 }
