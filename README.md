@@ -15,17 +15,58 @@ encrypted internal flash storage.
 
 ## Quick start
 
-1. Download or clone the repository.
-2. Connect the CYD over USB.
-3. Install esptool with `python -m pip install esptool`.
-4. Flash the complete firmware:
+1. Download or clone the repository and open a terminal in its directory.
+2. Connect the CYD with a USB data cable. Disconnect other Espressif boards
+   during the first flash so the correct device is detected automatically.
+3. Install Python 3, then install esptool:
+
+Linux or macOS:
 
 ```sh
-python -m esptool --chip esp32 --port /dev/ttyUSB0 write_flash 0x0 firmware-offline-merged.bin
+python3 -m pip install --upgrade esptool
 ```
 
-Replace `/dev/ttyUSB0` with your device port if necessary. On first boot,
-calibrate the touchscreen, create a PIN, and set the UTC time.
+Windows PowerShell or Command Prompt:
+
+```powershell
+py -m pip install --upgrade esptool
+```
+
+If the `py` launcher is unavailable on Windows, use `python` in its place.
+
+4. Flash the complete firmware. The port is intentionally omitted so esptool
+   can discover the connected ESP32 automatically.
+
+Linux or macOS:
+
+```sh
+python3 -m esptool --chip esp32 write-flash 0x0 firmware-offline-merged.bin
+```
+
+Windows PowerShell or Command Prompt:
+
+```powershell
+py -m esptool --chip esp32 write-flash 0x0 firmware-offline-merged.bin
+```
+
+If automatic detection finds multiple devices, list the available ports with
+`python3 -m serial.tools.list_ports` on Linux/macOS or
+`py -m serial.tools.list_ports` on Windows. Run the flash command again with
+`--port PORT`, replacing `PORT` with the reported value. Typical values such
+as `/dev/ttyUSB0`, `/dev/cu.usbserial-*`, and `COM3` are examples only and must
+not be copied without checking your computer.
+
+`write-flash` is the current esptool command. If an older esptool 4.x
+installation reports it as invalid and lists `write_flash`, either upgrade
+esptool or use `write_flash` for that command.
+
+After flashing, press `RST`. On first boot, calibrate the touchscreen, create
+a PIN, and set the UTC time.
+
+If no device is detected, close any serial monitor, check that the cable
+supports data, install the USB-to-serial driver required by your board, and
+put the board in download mode by holding `BOOT`, pressing and releasing
+`RST`, and then releasing `BOOT`.
 
 To synchronize time, manage services, or install later updates, open
 [`tools/cyd-manager.html`](tools/cyd-manager.html) in desktop Chrome or Edge.

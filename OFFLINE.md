@@ -7,18 +7,47 @@ flash memory.
 ## Flashing
 
 `firmware-offline-merged.bin` contains the bootloader, partition table, and
-application. With the CYD connected at `/dev/ttyUSB0`, run this command from
-the project directory:
+application. Connect the CYD with a USB data cable, disconnect other Espressif
+boards, and run the command for your operating system from the project
+directory. The port is intentionally omitted so esptool can discover the
+connected ESP32 automatically.
 
 The merged BIN does not include an empty SPIFFS image. Flashing it preserves
 an existing internal vault and allows migration from the old format.
 
+Linux or macOS:
+
 ```sh
-python -m esptool --chip esp32 --port /dev/ttyUSB0 write_flash 0x0 firmware-offline-merged.bin
+python3 -m pip install --upgrade esptool
+python3 -m esptool --chip esp32 write-flash 0x0 firmware-offline-merged.bin
 ```
 
-If the port is different, check it with `ls /dev/ttyUSB*`. Press `RST` after
-flashing.
+Windows PowerShell or Command Prompt:
+
+```powershell
+py -m pip install --upgrade esptool
+py -m esptool --chip esp32 write-flash 0x0 firmware-offline-merged.bin
+```
+
+If the `py` launcher is unavailable on Windows, use `python` in its place.
+
+If automatic detection finds multiple devices, list the available ports with
+`python3 -m serial.tools.list_ports` on Linux/macOS or
+`py -m serial.tools.list_ports` on Windows. Add `--port PORT` to the flash
+command, replacing `PORT` with the value reported on that computer. Names such
+as `/dev/ttyUSB0`, `/dev/cu.usbserial-*`, and `COM3` are examples, not fixed
+settings.
+
+`write-flash` is the current esptool command. If an older esptool 4.x
+installation reports it as invalid and lists `write_flash`, either upgrade
+esptool or use `write_flash` for that command.
+
+If no device is detected, close any serial monitor, use a USB data cable, and
+install the USB-to-serial driver required by the board. Put the board in
+download mode by holding `BOOT`, pressing and releasing `RST`, and then
+releasing `BOOT`. Linux users may also need permission to access serial
+devices according to their distribution. Press `RST` after a successful
+flash.
 
 ## First boot
 
